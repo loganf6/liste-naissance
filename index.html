@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notre Liste de Naissance</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        body { background-color: #F9F6F0; color: #3A3530; font-family: 'Montserrat', sans-serif; }
+        .font-serif { font-family: 'Fraunces', serif; }
+    </style>
+</head>
+<body class="pb-24">
+
+    <nav class="max-w-6xl mx-auto px-6 py-6 flex justify-end">
+        <button id="adminBtn" onclick="toggleAdminMode()" class="text-xs tracking-widest uppercase opacity-40 hover:opacity-100 transition-opacity cursor-pointer">
+            🔒 Parents
+        </button>
+    </nav>
+
+    <header class="max-w-3xl mx-auto text-center px-6 mt-8 mb-20">
+        <span class="text-xs tracking-[0.3em] uppercase" style="color: #C87A65;">Bienvenue</span>
+        <h1 class="font-serif text-5xl md:text-6xl font-extralight mt-4 mb-6 leading-tight">
+            En attendant <br>
+            <span class="italic font-light" style="color: #C87A65;">notre petit oiseau</span>
+        </h1>
+        <p class="font-light text-sm md:text-base leading-relaxed max-w-xl mx-auto opacity-80" style="color: #7A7269;">
+            Parce que vous nous demandez souvent ce qui nous ferait plaisir ou ce dont nous aurions besoin pour préparer son arrivée, voici notre liste de souhaits.
+        </p>
+
+        <div class="mt-12 p-8 rounded-2xl max-w-lg mx-auto border bg-white" style="borderColor: #EFEBE4;">
+            <h3 class="font-serif text-xl font-light mb-2">La Cagnotte Globale</h3>
+            <p class="text-xs font-light mb-6" style="color: #7A7269;">
+                Pour participer librement à l'aménagement de la chambre ou aux futurs besoins de bébé.
+            </p>
+            <a 
+                href="https://www.leetchi.com/c/votre-cagnotte-ici" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="inline-block font-medium text-xs tracking-widest uppercase text-white px-8 py-4 rounded-full transition-transform hover:scale-[1.02] cursor-pointer"
+                style="background-color: #C87A65;"
+            >
+                ✨ Contribuer à la cagnotte
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6">
+        <div class="flex items-center justify-between border-b pb-4 mb-12" style="borderColor: #EFEBE4;">
+            <h2 class="font-serif text-2xl font-light italic">Nos coups de cœur</h2>
+            <button id="addGiftBtn" onclick="openGiftForm()" class="hidden text-xs uppercase tracking-wider px-4 py-2 rounded-full text-white cursor-pointer" style="background-color: #8FA089;">
+                + Ajouter une idée
+            </button>
+        </div>
+
+        <div id="giftForm" class="hidden mb-12 p-8 rounded-xl border bg-white" style="borderColor: #EFEBE4;">
+            <h3 class="font-serif text-lg mb-4">Ajouter un souhait</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <input type="text" id="formTitle" placeholder="Nom du cadeau (ex: Cape de bain)" class="p-3 border rounded-xs outline-none bg-neutral-50" style="borderColor: #EFEBE4;">
+                <input type="text" id="formPrice" placeholder="Prix indicatif (ex: 40€)" class="p-3 border rounded-xs outline-none bg-neutral-50" style="borderColor: #EFEBE4;">
+                <input type="url" id="formLink" placeholder="Lien vers une boutique internet (optionnel)" class="p-3 border rounded-xs outline-none bg-neutral-50 md:col-span-2" style="borderColor: #EFEBE4;">
+                <textarea id="formDesc" placeholder="Petite note pour nos proches..." class="p-3 border rounded-xs outline-none bg-neutral-50 md:col-span-2 h-20 resize-none" style="borderColor: #EFEBE4;"></textarea>
+            </div>
+            <div class="mt-4 flex gap-2 justify-end text-xs uppercase tracking-wider">
+                <button onclick="closeGiftForm()" class="px-4 py-2 opacity-60">Annuler</button>
+                <button onclick="saveGift()" class="px-6 py-2 text-white rounded-full cursor-pointer" style="background-color: #8FA089;">Enregistrer</button>
+            </div>
+        </div>
+
+        <div id="giftsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            </div>
+    </main>
+
+    <script>
+        const PARENT_PASSWORD = "bebe";
+        let adminMode = false;
+
+        // Base de données initiale des cadeaux
+        let items = [
+            { id: 1, title: "Poussette trio tout-terrain", description: "Pour nos futures balades en famille, sur les chemins de campagne comme en ville.", link: "https://www.bonton.fr", price: "650€", reserved: false, reservedBy: "" },
+            { id: 2, title: "Berceau évolutif en rotin", description: "Un petit cocon vintage et naturel pour habiller sa future chambre.", link: "https://www.smallable.com", price: "280€", reserved: true, reservedBy: "Mamie Jeanne" },
+            { id: 3, title: "Gigoteuse en gaze de coton", description: "Toute douce, couleur terre cuite, pour des nuits paisibles.", link: "https://www.laredoute.fr", price: "45€", reserved: false, reservedBy: "" },
+            { id: 4, title: "Set de vaisselle en silicone", description: "Pour ses premiers repas de grand. Sans BPA, incassable et lavable en machine.", link: "", price: "35€", reserved: false, reservedBy: "" }
+        ];
+
+        function renderGifts() {
+            const grid = document.getElementById('giftsGrid');
+            grid.innerHTML = '';
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "p-8 rounded-2xl border bg-white flex flex-col justify-between transition-all duration-300";
+                card.style.borderColor = "#EFEBE4";
+                if (item.reserved) card.style.opacity = "0.65";
+
+                const linkHtml = item.link && !item.reserved ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="underline tracking-wide opacity-70 hover:opacity-100" style="color: #7A7269;">Voir un exemple ↗</a>` : '';
+                const statusHtml = item.reserved ? `<span class="italic" style="color: #C87A65;">🌾 Offert par ${item.reservedBy}</span>` : '';
+                
+                let actionBtnHtml = '';
+                if (adminMode) {
+                    actionBtnHtml = `<button onclick="deleteItem(${item.id})" class="text-red-700 opacity-70 hover:opacity-100 cursor-pointer text-xs uppercase tracking-wider">Supprimer</button>`;
+                } else if (!item.reserved) {
+                    actionBtnHtml = `<button onclick="reserveItem(${item.id})" class="px-5 py-2.5 rounded-full text-white font-medium tracking-wider uppercase text-[0.65rem] transition-colors cursor-pointer" style="background-color: #8FA089;">Offrir ce cadeau</button>`;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-baseline gap-4 mb-4">
+                            <h3 class="font-serif text-xl font-normal leading-tight ${item.reserved ? 'line-through text-neutral-400' : ''}" style="color: ${item.reserved ? '#7A7269' : '#3A3530'}">
+                                ${item.title}
+                            </h3>
+                            ${item.price ? `<span class="font-serif text-base italic shrink-0" style="color: #C87A65;">${item.price}</span>` : ''}
+                        </div>
+                        ${item.description ? `<p class="font-light text-xs leading-relaxed mb-6" style="color: #7A7269;">${item.description}</p>` : ''}
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t" style="border-top-color: #EFEBE4; font-size: 0.75rem;">
+                        <div>${linkHtml || statusHtml}</div>
+                        <div>${actionBtnHtml}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleAdminMode() {
+            if (!adminMode) {
+                const pw = prompt("Entrez le mot de passe d'administration :");
+                if (pw === PARENT_PASSWORD) {
+                    adminMode = true;
+                    document.getElementById('adminBtn').innerText = "🚪 Quitter l'édition";
+                    document.getElementById('addGiftBtn').classList.remove('hidden');
+                } else if (pw !== null) {
+                    alert("Mot de passe incorrect.");
+                }
+            } else {
+                adminMode = false;
+                document.getElementById('adminBtn').innerText = "🔒 Parents";
+                document.getElementById('addGiftBtn').classList.add('hidden');
+                closeGiftForm();
+            }
+            renderGifts();
+        }
+
+        function reserveItem(id) {
+            const name = prompt("Pourriez-vous nous indiquer votre nom ou prénom pour que nous puissions vous remercier ?");
+            if (name === null) return;
+            
+            items = items.map(item => {
+                if (item.id === id) {
+                    return { ...item, reserved: true, reservedBy: name.trim() || "Un proche" };
+                }
+                return item;
+            });
+            renderGifts();
+        }
+
+        function openGiftForm() { document.getElementById('giftForm').classList.remove('hidden'); }
+        function closeGiftForm() { document.getElementById('giftForm').classList.add('hidden'); resetForm(); }
+        function resetForm() {
+            document.getElementById('formTitle').value = '';
+            document.getElementById('formPrice').value = '';
+            document.getElementById('formLink').value = '';
+            document.getElementById('formDesc').value = '';
+        }
+
+        function saveGift() {
+            const title = document.getElementById('formTitle').value.trim();
+            const price = document.getElementById('formPrice').value.trim();
+            const link = document.getElementById('formLink').value.trim();
+            const description = document.getElementById('formDesc').value.trim();
+
+            if (!title) return alert("Le nom du cadeau est obligatoire.");
+
+            items.push({ id: Date.now(), title, price, link, description, reserved: false, reservedBy: "" });
+            closeGiftForm();
+            renderGifts();
+        }
+
+        function deleteItem(id) {
+            if (confirm("Supprimer cette idée ?")) {
+                items = items.filter(it => it.id !== id);
+                renderGifts();
+            }
+        }
+
+        // Premier affichage au chargement de la page
+        renderGifts();
+    </script>
+</body>
+</html>
