@@ -22,8 +22,6 @@
     <style>
         body { background-color: #F9F6F0; color: #3A3530; font-family: 'Montserrat', sans-serif; }
         .font-serif { font-family: 'Fraunces', serif; }
-        .preview-tooltip { display: none; }
-        .preview-trigger:hover .preview-tooltip { display: block; }
     </style>
 </head>
 <body class="pb-24">
@@ -40,7 +38,7 @@
         <span class="text-xs tracking-[0.3em] uppercase" style="color: #C87A65;">Bienvenue</span>
         <h1 class="font-serif text-5xl md:text-6xl font-extralight mt-4 mb-6 leading-tight">
             En attendant <br>
-            <span class="italic font-light" style="color: #C87A65;">notre petit bébé</span>
+            <span class="italic font-light" style="color: #C87A65;">notre petit oiseau</span>
         </h1>
         <p class="font-light text-sm md:text-base leading-relaxed max-w-xl mx-auto opacity-80" style="color: #7A7269;">
             Parce que vous nous demandez souvent ce qui nous ferait plaisir ou ce dont nous aurions besoin pour préparer son arrivée, voici notre liste de souhaits.
@@ -83,7 +81,7 @@
             <p class="text-center col-span-2 opacity-50 italic">Chargement de la liste de souhaits...</p>
         </div>
 
-        <!-- Bloc Cagnotte Globale (Bascoulé en bas) -->
+        <!-- Bloc Cagnotte Globale -->
         <section class="mt-20 border-t pt-16" style="borderColor: #EFEBE4;">
             <div class="p-8 rounded-2xl max-w-lg mx-auto border bg-white text-center shadow-xs" style="borderColor: #EFEBE4;">
                 <h3 class="font-serif text-xl font-light mb-2">La Cagnotte Globale</h3>
@@ -116,7 +114,18 @@
             console.error("Erreur d'initialisation Supabase :", e);
         }
 
-        // Calculer le pourcentage dynamique des cadeaux restants
+        // Extraire un nom de domaine propre pour l'affichage du marchand
+        function getDomainName(url) {
+            try {
+                const domain = new URL(url).hostname.replace('www.', '');
+                const parts = domain.split('.');
+                // Retourne le nom principal avec la première lettre en majuscule (ex: smallable, stokke)
+                return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+            } catch (e) {
+                return "Voir le site";
+            }
+        }
+
         function updateCompletionStats(gifts) {
             const badge = document.getElementById('completionBadge');
             if (!gifts || gifts.length === 0) {
@@ -130,7 +139,6 @@
 
             badge.innerText = `${percentageRemaining}% restants`;
             
-            // Changement subtil de couleur si la liste se remplit
             if (percentageRemaining < 30) {
                 badge.style.backgroundColor = "#F5EBE6";
                 badge.style.color = "#C87A65";
@@ -140,7 +148,6 @@
             }
         }
 
-        // Charger et afficher les cadeaux depuis Supabase
         async function loadGifts() {
             const grid = document.getElementById('giftsGrid');
             if (!_supabase) return;
@@ -172,27 +179,18 @@
                 card.style.borderColor = "#EFEBE4";
                 if (item.reserved) card.style.opacity = "0.65";
 
-                // Configuration du lien et de la preview
+                // Création du bouton marchand épuré au lieu de l'aperçu brisé
                 let linkHtml = '';
                 if (item.link && !item.reserved) {
+                    const shopName = getDomainName(item.link);
                     linkHtml = `
-                        <div class="flex items-center gap-2">
-                            <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="underline tracking-wide opacity-70 hover:opacity-100" style="color: #7A7269;">Voir l'article ↗</a>
-                            <div class="relative inline-block preview-trigger cursor-help opacity-40 hover:opacity-100 p-1">
-                                <span>👁️</span>
-                                <div class="preview-tooltip absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 bg-white p-3 rounded-lg border shadow-xl z-50 text-center" style="borderColor: #EFEBE4;">
-                                    <p class="text-[0.65rem] font-medium uppercase tracking-wider mb-2" style="color: #C87A65;">Aperçu du site distant</p>
-                                    <div class="w-full h-32 bg-gray-50 rounded overflow-hidden flex items-center justify-center border border-dashed border-neutral-200">
-                                        <iframe src="${item.link}" class="w-[400px] h-[200px] scale-50 origin-center pointer-events-none border-none"></iframe>
-                                    </div>
-                                    <p class="text-[0.6rem] opacity-50 mt-1 leading-tight">Certaines enseignes bloquent l'aperçu direct, cliquez sur le lien si l'écran reste blanc.</p>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[0.7rem] font-medium tracking-wide border transition-colors hover:bg-neutral-50" style="color: #7A7269; borderColor: #EFEBE4;">
+                            🛒 Chez ${shopName} ↗
+                        </a>
                     `;
                 }
 
-                const statusHtml = item.reserved ? `<span class="italic" style="color: #C87A65;">🌾 Offert par ${item.reserved_by || 'un proche'}</span>` : '';
+                const statusHtml = item.reserved ? `<span class="italic text-[0.75rem]" style="color: #C87A65;">🌾 Offert par ${item.reserved_by || 'un proche'}</span>` : '';
                 
                 let actionBtnHtml = '';
                 if (adminMode) {
@@ -201,13 +199,24 @@
                     actionBtnHtml = `<button onclick="reserveItem(${item.id})" class="px-5 py-2.5 rounded-full text-white font-medium tracking-wider uppercase text-[0.65rem] transition-transform hover:scale-[1.02] cursor-pointer" style="background-color: #8FA089;">Offrir ce cadeau</button>`;
                 }
 
+                // Logique d'affichage d'un petit marqueur visuel basé sur le prix
+                let budgetIcon = '🌱';
+                if (item.price) {
+                    const numericPrice = parseInt(item.price.replace(/[^0-9]/g, ''));
+                    if (numericPrice >= 150) budgetIcon = '✨'; // Très belle pièce
+                    else if (numericPrice >= 60) budgetIcon = '🌿'; // Beau cadeau
+                }
+
                 card.innerHTML = `
                     <div>
-                        <div class="flex justify-between items-baseline gap-4 mb-4">
+                        <div class="flex justify-between items-top gap-4 mb-3">
                             <h3 class="font-serif text-xl font-normal leading-tight ${item.reserved ? 'line-through text-neutral-400' : ''}" style="color: ${item.reserved ? '#7A7269' : '#3A3530'}">
                                 ${item.title}
                             </h3>
-                            ${item.price ? `<span class="font-serif text-base italic shrink-0" style="color: #C87A65;">${item.price}</span>` : ''}
+                            <div class="text-right shrink-0">
+                                ${item.price ? `<span class="font-serif text-base italic block" style="color: #C87A65;">${item.price}</span>` : ''}
+                                <span class="text-[0.65rem] opacity-40">${item.reserved ? '🔒' : budgetIcon}</span>
+                            </div>
                         </div>
                         ${item.description ? `<p class="font-light text-xs leading-relaxed mb-6" style="color: #7A7269;">${item.description}</p>` : ''}
                     </div>
