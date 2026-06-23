@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notre Liste de Naissance</title>
+    <title>Liste de Naissance Cindy & Logan</title>
     
-    <!-- Favicon Émoji -->
+    <!-- Favicon Émoji Oiseau Sympa -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
 
     <!-- Autoriser les connexions externes pour éviter les blocages de sécurité GitHub Pages -->
@@ -79,7 +79,7 @@
                 <span class="italic font-light text-terracotta">de Cindy & Logan</span>
             </h1>
             <p class="font-light text-sm md:text-base leading-relaxed opacity-80 text-stone-700 mb-10 max-w-md mx-auto">
-                Notre petit enfant s'apprête à pointer le bout de son nez. Pour aborder ses premiers mois sereinement, nous avons imaginé cet espace.
+                Notre petit trésor s'apprête à pointer le bout de son nez. Pour aborder ses premiers mois sereinement, nous avons imaginé cet espace.
             </p>
 
             <div class="bg-white/50 backdrop-blur-xs border border-sand-light rounded-2xl p-6 text-left mb-10 shadow-xs">
@@ -105,7 +105,7 @@
             </button>
         </div>
 
-        <p class="text-[0.65rem] tracking-widest uppercase opacity-40 font-light">Merci 🫶🏻</p>
+        <p class="text-[0.65rem] tracking-widest uppercase opacity-40 font-light">🕊️ Avec amour</p>
     </div>
 
 
@@ -123,7 +123,7 @@
             <h1 class="font-serif text-5xl md:text-6xl font-extralight mt-4 mb-6 leading-tight tracking-tight">
                 En attendant <br>
                 <span class="italic font-light relative inline-block mt-1 text-terracotta">
-                    notre petit 
+                    notre petit bébé
                 </span>
             </h1>
             <p class="font-light text-sm md:text-base leading-relaxed max-w-xl mx-auto opacity-75 text-stone-700">
@@ -285,7 +285,6 @@
                     `;
                 }
 
-                // CHANGEMENT : Statut anonyme en public, complet en mode parent
                 let statusHtml = '';
                 if (item.reserved) {
                     if (adminMode) {
@@ -309,7 +308,6 @@
                     else if (numericPrice >= 60) budgetIcon = '🌿';
                 }
 
-                // CHANGEMENT : Le prix ne s'affiche en texte QUE pour les parents ou si l'objet n'est pas réservé
                 const showPrice = item.price && (!item.reserved || adminMode);
 
                 card.innerHTML = `
