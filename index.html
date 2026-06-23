@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notre Liste de Naissance</title>
     
+    <!-- Favicon Émoji -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
+
     <!-- Autoriser les connexions externes pour éviter les blocages de sécurité GitHub Pages -->
     <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src * 'unsafe-inline';">
 
@@ -17,7 +20,7 @@
     <!-- Polices élégantes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2 family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -46,7 +49,6 @@
             background: radial-gradient(circle at top, #FDFBF7 0%, #F5F0E6 100%); 
         }
         
-        /* Animation fluide pour les cartes */
         .gift-card {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 4px 20px -2px rgba(90, 80, 70, 0.03), 0 2px 6px -1px rgba(90, 80, 70, 0.02);
@@ -57,7 +59,6 @@
             border-color: #DCD5C9 !important;
         }
         
-        /* Apparition en fondu des éléments de la grille */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -65,77 +66,118 @@
         .fade-in { animation: fadeIn 0.6s ease forwards; }
     </style>
 </head>
-<body class="pb-24 min-h-screen border-[8px] border-white sm:border-[16px] text-charcoal">
+<body class="pb-24 min-h-screen border-[8px] border-white sm:border-[16px] text-charcoal overflow-x-hidden">
 
-    <!-- Barre de navigation / Accès Parents -->
-    <nav class="max-w-6xl mx-auto px-6 py-4 flex justify-end">
-        <button id="adminBtn" onclick="toggleAdminMode()" class="text-[0.65rem] tracking-[0.2em] uppercase opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer flex items-center gap-1.5 font-medium py-2 px-3 rounded-md hover:bg-black/5">
-            <span>🔒</span> PARENTS
-        </button>
-    </nav>
+    <!-- LANDING PAGE / ÉCRAN DE BIENVENUE INITIAL -->
+    <div id="landingPage" class="fixed inset-0 z-50 flex flex-col justify-between items-center px-6 py-12 text-center bg-gradient-to-b from-[#FDFBF7] to-[#F5F0E6] transition-all duration-700 ease-in-out border-[8px] border-white sm:border-[16px]">
+        <div></div>
 
-    <!-- En-tête Poétique -->
-    <header class="max-w-3xl mx-auto text-center px-6 mt-6 mb-20 fade-in">
-        <span class="text-[0.65rem] tracking-[0.4em] uppercase font-semibold text-terracotta">Bienvenue</span>
-        <h1 class="font-serif text-5xl md:text-6xl font-extralight mt-4 mb-6 leading-tight tracking-tight">
-            En attendant <br>
-            <span class="italic font-light relative inline-block mt-1 text-terracotta">
-                notre petit oiseau
-            </span>
-        </h1>
-        <p class="font-light text-sm md:text-base leading-relaxed max-w-xl mx-auto opacity-75 text-stone-700">
-            Parce que vous nous demandez souvent ce qui nous ferait plaisir ou ce dont nous aurions besoin pour préparer son arrivée, voici notre sélection de doux souhaits.
-        </p>
-    </header>
+        <div class="max-w-xl mx-auto fade-in">
+            <span class="text-[0.65rem] tracking-[0.4em] uppercase font-semibold text-terracotta">Bienvenue</span>
+            <h1 class="font-serif text-4xl md:text-5xl font-extralight mt-4 mb-6 leading-tight tracking-tight text-stone-800">
+                La Liste de Naissance <br>
+                <span class="italic font-light text-terracotta">de Cindy & Logan</span>
+            </h1>
+            <p class="font-light text-sm md:text-base leading-relaxed opacity-80 text-stone-700 mb-10 max-w-md mx-auto">
+                Notre petit enfant s'apprête à pointer le bout de son nez. Pour aborder ses premiers mois sereinement, nous avons imaginé cet espace.
+            </p>
 
-    <!-- Zone Principale -->
-    <main class="max-w-5xl mx-auto px-6">
-        
-        <!-- Titre de section + Décompte Dynamique -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-5 mb-12 gap-4 border-sand-border">
-            <div class="flex items-center gap-4">
-                <h2 class="font-serif text-2xl font-light italic text-stone-800">Nos coups de cœur</h2>
-                <span id="completionBadge" class="text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full font-semibold transition-all duration-500 shadow-sm bg-sand-light text-warm-gray">
-                    Calcul...
-                </span>
+            <div class="bg-white/50 backdrop-blur-xs border border-sand-light rounded-2xl p-6 text-left mb-10 shadow-xs">
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-stone-800 mb-4 text-center">Comment ça marche ?</h3>
+                <div class="space-y-4 text-xs font-light text-stone-600">
+                    <div class="flex items-start gap-3">
+                        <span class="text-sage font-medium">1.</span>
+                        <p><strong class="font-medium text-stone-800">Choisissez une idée :</strong> Parcourez nos coups de cœur selon vos envies.</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-sage font-medium">2.</span>
+                        <p><strong class="font-medium text-stone-800">Réservez en un clic :</strong> Indiquez votre nom pour bloquer le cadeau sur la liste.</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-sage font-medium">3.</span>
+                        <p><strong class="font-medium text-stone-800">Commandez librement :</strong> Un lien vous redirige vers la boutique pour finaliser l'achat à votre convenance.</p>
+                    </div>
+                </div>
             </div>
-            <button id="addGiftBtn" onclick="openGiftForm()" class="hidden text-[0.7rem] uppercase font-medium tracking-widest px-5 py-2.5 rounded-full text-white cursor-pointer self-start sm:self-auto shadow-sm transition-all duration-300 bg-sage hover:bg-sage-hover active:scale-98">
-                + Ajouter une idée
+
+            <button onclick="enterSite()" class="inline-block font-medium text-[0.7rem] tracking-[0.2em] uppercase text-white px-10 py-4 rounded-full transition-all duration-300 bg-sage hover:bg-sage-hover hover:shadow-md hover:scale-[1.01] active:scale-99 cursor-pointer">
+                Découvrir la liste
             </button>
         </div>
 
-        <!-- Formulaire d'ajout (visible uniquement pour les parents) -->
-        <div id="giftForm" class="hidden mb-12 p-8 rounded-2xl border bg-white shadow-md border-sand-light">
-            <h3 class="font-serif text-lg mb-4 text-stone-800">Ajouter un souhait sur la liste</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <input type="text" id="formTitle" placeholder="Nom du cadeau (ex: Cape de bain)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light">
-                <input type="text" id="formPrice" placeholder="Prix indicatif (ex: 40€)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light">
-                <input type="url" id="formLink" placeholder="Lien direct vers le produit internet (optionnel)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light md:col-span-2">
-                <textarea id="formDesc" placeholder="Petite note pour nos proches (taille, couleur, astuce...)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light md:col-span-2 h-24 resize-none"></textarea>
-            </div>
-            <div class="mt-5 flex gap-3 justify-end text-xs uppercase tracking-widest font-medium">
-                <button onclick="closeGiftForm()" class="px-5 py-2.5 opacity-60 hover:opacity-100 transition-opacity">Annuler</button>
-                <button onclick="saveGift()" class="px-6 py-2.5 text-white rounded-full cursor-pointer transition-all bg-sage hover:bg-sage-hover">Enregistrer</button>
-            </div>
-        </div>
+        <p class="text-[0.65rem] tracking-widest uppercase opacity-40 font-light">Merci 🫶🏻</p>
+    </div>
 
-        <!-- Grille de Cadeaux -->
-        <div id="giftsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
-            <p class="text-center col-span-2 opacity-40 italic text-sm py-12">Chargement des précieux souhaits...</p>
-        </div>
 
-        <!-- Bloc Cagnotte Globale -->
-        <section class="mt-24 border-t pt-16 border-sand-border">
-            <div class="p-10 rounded-3xl max-w-lg mx-auto border bg-white text-center transition-all duration-500 hover:shadow-md border-sand-light" style="box-shadow: 0 10px 30px -10px rgba(90,80,70,0.05);">
-                <div class="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-xl bg-neutral-50 text-terracotta">✨</div>
-                <h3 class="font-serif text-2xl font-light mb-2 text-stone-800">La Cagnotte Globale</h3>
-                <p class="text-xs font-light mb-8 max-w-sm mx-auto leading-relaxed text-warm-gray">Pour participer en toute liberté à l'aménagement final de sa chambre ou aux futurs petits besoins du quotidien.</p>
-                <a href="https://www.leetchi.com/c/votre-cagnotte-ici" target="_blank" rel="noopener noreferrer" class="inline-block font-medium text-[0.7rem] tracking-[0.2em] uppercase text-white px-10 py-4 rounded-full transition-all duration-300 bg-terracotta hover:bg-[#B56A56] hover:shadow-sm hover:scale-[1.01] active:scale-99 cursor-pointer">
-                    Contribuer à la cagnotte
-                </a>
+    <!-- CONTENU PRINCIPAL DE LA LISTE -->
+    <div id="mainContent" class="opacity-0 transition-opacity duration-700">
+        
+        <nav class="max-w-6xl mx-auto px-6 py-4 flex justify-end">
+            <button id="adminBtn" onclick="toggleAdminMode()" class="text-[0.65rem] tracking-[0.2em] uppercase opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer flex items-center gap-1.5 font-medium py-2 px-3 rounded-md hover:bg-black/5">
+                <span>🔒</span> PARENTS
+            </button>
+        </nav>
+
+        <header class="max-w-3xl mx-auto text-center px-6 mt-6 mb-20">
+            <span class="text-[0.65rem] tracking-[0.4em] uppercase font-semibold text-terracotta">Bienvenue</span>
+            <h1 class="font-serif text-5xl md:text-6xl font-extralight mt-4 mb-6 leading-tight tracking-tight">
+                En attendant <br>
+                <span class="italic font-light relative inline-block mt-1 text-terracotta">
+                    notre petit 
+                </span>
+            </h1>
+            <p class="font-light text-sm md:text-base leading-relaxed max-w-xl mx-auto opacity-75 text-stone-700">
+                Parce que vous nous demandez souvent ce qui nous ferait plaisir ou ce dont nous aurions besoin pour préparer son arrivée, voici notre sélection de doux souhaits.
+            </p>
+        </header>
+
+        <main class="max-w-5xl mx-auto px-6">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-5 mb-12 gap-4 border-sand-border">
+                <div class="flex items-center gap-4">
+                    <h2 class="font-serif text-2xl font-light italic text-stone-800">Nos coups de cœur</h2>
+                    <span id="completionBadge" class="text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full font-semibold transition-all duration-500 shadow-sm bg-sand-light text-warm-gray">
+                        Calcul...
+                    </span>
+                </div>
+                <button id="addGiftBtn" onclick="openGiftForm()" class="hidden text-[0.7rem] uppercase font-medium tracking-widest px-5 py-2.5 rounded-full text-white cursor-pointer self-start sm:self-auto shadow-sm transition-all duration-300 bg-sage hover:bg-sage-hover active:scale-98">
+                    + Ajouter une idée
+                </button>
             </div>
-        </section>
-    </main>
+
+            <!-- Formulaire d'ajout -->
+            <div id="giftForm" class="hidden mb-12 p-8 rounded-2xl border bg-white shadow-md border-sand-light">
+                <h3 class="font-serif text-lg mb-4 text-stone-800">Ajouter un souhait sur la liste</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <input type="text" id="formTitle" placeholder="Nom du cadeau (ex: Cape de bain)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light">
+                    <input type="text" id="formPrice" placeholder="Prix indicatif (ex: 40€) - S'affichera uniquement pour vous" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light">
+                    <input type="url" id="formLink" placeholder="Lien direct vers le produit internet (optionnel)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light md:col-span-2">
+                    <textarea id="formDesc" placeholder="Petite note pour nos proches (taille, couleur, astuce...)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light md:col-span-2 h-24 resize-none"></textarea>
+                </div>
+                <div class="mt-5 flex gap-3 justify-end text-xs uppercase tracking-widest font-medium">
+                    <button onclick="closeGiftForm()" class="px-5 py-2.5 opacity-60 hover:opacity-100 transition-opacity">Annuler</button>
+                    <button onclick="saveGift()" class="px-6 py-2.5 text-white rounded-full cursor-pointer transition-all bg-sage hover:bg-sage-hover">Enregistrer</button>
+                </div>
+            </div>
+
+            <!-- Grille de Cadeaux -->
+            <div id="giftsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+                <p class="text-center col-span-2 opacity-40 italic text-sm py-12">Chargement des précieux souhaits...</p>
+            </div>
+
+            <!-- Bloc Cagnotte Globale -->
+            <section class="mt-24 border-t pt-16 border-sand-border">
+                <div class="p-10 rounded-3xl max-w-lg mx-auto border bg-white text-center transition-all duration-500 hover:shadow-md border-sand-light" style="box-shadow: 0 10px 30px -10px rgba(90,80,70,0.05);">
+                    <div class="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-xl bg-neutral-50 text-terracotta">✨</div>
+                    <h3 class="font-serif text-2xl font-light mb-2 text-stone-800">La Cagnotte Globale</h3>
+                    <p class="text-xs font-light mb-8 max-w-sm mx-auto leading-relaxed text-warm-gray">Pour participer en toute liberté à l'aménagement final de sa chambre ou aux futurs petits besoins du quotidien.</p>
+                    <a href="https://www.leetchi.com/c/votre-cagnotte-ici" target="_blank" rel="noopener noreferrer" class="inline-block font-medium text-[0.7rem] tracking-[0.2em] uppercase text-white px-10 py-4 rounded-full transition-all duration-300 bg-terracotta hover:bg-[#B56A56] hover:shadow-sm hover:scale-[1.01] active:scale-99 cursor-pointer">
+                        Contribuer à la cagnotte
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <script>
         // =========================================================
@@ -156,6 +198,16 @@
             }
         } catch (e) {
             console.error("Erreur d'initialisation Supabase :", e);
+        }
+
+        function enterSite() {
+            const landing = document.getElementById('landingPage');
+            const main = document.getElementById('mainContent');
+            landing.style.opacity = '0';
+            landing.style.pointerEvents = 'none';
+            main.classList.remove('opacity-0');
+            main.classList.add('opacity-100');
+            setTimeout(() => { landing.style.display = 'none'; }, 700);
         }
 
         function getDomainName(url) {
@@ -207,8 +259,7 @@
 
             if (!data || data.length === 0) {
                 grid.innerHTML = `<div class="text-center col-span-2 py-16 opacity-60">
-                    <p class="font-serif text-2xl italic mb-2 text-stone-700">La liste est encore vide</p>
-                    <p class="text-xs font-light">Connectez-vous à l'espace parent en haut à droite pour ajouter vos premières idées !</p>
+                    <p class="font-serif text-2xl italic mb-2 text-stone-700">La Liste est vide</p>
                 </div>`;
                 return;
             }
@@ -219,7 +270,7 @@
                 card.style.animationDelay = `${index * 0.05}s`;
                 
                 if (item.reserved) {
-                    card.style.opacity = "0.55";
+                    card.style.opacity = "0.6";
                     card.style.transform = "none";
                     card.classList.remove('hover:-translate-y-1');
                 }
@@ -234,7 +285,15 @@
                     `;
                 }
 
-                const statusHtml = item.reserved ? `<span class="italic text-[0.72rem] font-light flex items-center gap-1 text-terracotta">🌾 Offert par ${item.reserved_by || 'un proche'}</span>` : '';
+                // CHANGEMENT : Statut anonyme en public, complet en mode parent
+                let statusHtml = '';
+                if (item.reserved) {
+                    if (adminMode) {
+                        statusHtml = `<span class="italic text-[0.72rem] font-semibold flex items-center gap-1 text-emerald-700">💝 Offert par : ${item.reserved_by || 'Anonyme'}</span>`;
+                    } else {
+                        statusHtml = `<span class="italic text-[0.72rem] font-light flex items-center gap-1 text-stone-400">🌾 Déjà réservé</span>`;
+                    }
+                }
                 
                 let actionBtnHtml = '';
                 if (adminMode) {
@@ -250,14 +309,17 @@
                     else if (numericPrice >= 60) budgetIcon = '🌿';
                 }
 
+                // CHANGEMENT : Le prix ne s'affiche en texte QUE pour les parents ou si l'objet n'est pas réservé
+                const showPrice = item.price && (!item.reserved || adminMode);
+
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start gap-4 mb-4">
-                            <h3 class="font-serif text-xl font-normal leading-tight text-stone-800 ${item.reserved ? 'line-through opacity-50' : ''}">
+                            <h3 class="font-serif text-xl font-normal leading-tight text-stone-800 ${item.reserved ? 'line-through opacity-40' : ''}">
                                 ${item.title}
                             </h3>
                             <div class="text-right shrink-0">
-                                ${item.price ? `<span class="font-serif text-base font-light italic block text-terracotta">${item.price}</span>` : ''}
+                                ${showPrice ? `<span class="font-serif text-base font-light italic block text-terracotta">${item.price}</span>` : ''}
                                 <span class="text-[0.6rem] block mt-0.5 opacity-30 tracking-widest">${item.reserved ? '🔒' : budgetIcon}</span>
                             </div>
                         </div>
@@ -292,7 +354,7 @@
         }
 
         async function reserveItem(id) {
-            const name = prompt("Pourriez-vous nous indiquer votre nom ou prénom pour que nous puissions vous remercier ?");
+            const name = prompt("Pourriez-vous nous indiquer votre nom ou prénom pour que Cindy & Logan puissent vous remercier ? (Il restera secret pour les autres invités)");
             if (name === null) return;
             const finalName = name.trim() || "Un proche";
             
