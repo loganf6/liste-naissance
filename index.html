@@ -5,73 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notre Liste de Naissance</title>
     
+    <!-- Autoriser les connexions externes pour éviter les blocages de sécurité GitHub Pages -->
     <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src * 'unsafe-inline';">
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Tailwind CSS (Version stable 3.4) -->
+    <script src="https://cdn.tailwindcss.com/3.4.15"></script>
     
+    <!-- Script officiel Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
+    <!-- Polices élégantes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2 family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Fraunces', 'serif'],
+                    },
+                    colors: {
+                        'terracotta': '#C87A65',
+                        'sage': '#8FA089',
+                        'sage-hover': '#7D8F77',
+                        'warm-gray': '#7A7269',
+                        'charcoal': '#3A3530',
+                        'sand-light': '#EFEBE4',
+                        'sand-border': '#E8E2D5'
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        body { background-color: #F9F6F0; color: #3A3530; font-family: 'Montserrat', sans-serif; }
-        .font-serif { font-family: 'Fraunces', serif; }
+        body { 
+            background: radial-gradient(circle at top, #FDFBF7 0%, #F5F0E6 100%); 
+        }
+        
+        /* Animation fluide pour les cartes */
+        .gift-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 20px -2px rgba(90, 80, 70, 0.03), 0 2px 6px -1px rgba(90, 80, 70, 0.02);
+        }
+        .gift-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -5px rgba(90, 80, 70, 0.08), 0 10px 15px -3px rgba(90, 80, 70, 0.04);
+            border-color: #DCD5C9 !important;
+        }
+        
+        /* Apparition en fondu des éléments de la grille */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.6s ease forwards; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-24 min-h-screen border-[8px] border-white sm:border-[16px] text-charcoal">
 
-    <nav class="max-w-6xl mx-auto px-6 py-6 flex justify-end">
-        <button id="adminBtn" onclick="toggleAdminMode()" class="text-xs tracking-widest uppercase opacity-40 hover:opacity-100 transition-opacity cursor-pointer">
-            🔒 Parents
+    <!-- Barre de navigation / Accès Parents -->
+    <nav class="max-w-6xl mx-auto px-6 py-4 flex justify-end">
+        <button id="adminBtn" onclick="toggleAdminMode()" class="text-[0.65rem] tracking-[0.2em] uppercase opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer flex items-center gap-1.5 font-medium py-2 px-3 rounded-md hover:bg-black/5">
+            <span>🔒</span> PARENTS
         </button>
     </nav>
 
-    <header class="max-w-3xl mx-auto text-center px-6 mt-8 mb-20">
-        <span class="text-xs tracking-[0.3em] uppercase" style="color: #C87A65;">Bienvenue</span>
-        <h1 class="font-serif text-5xl md:text-6xl font-extralight mt-4 mb-6 leading-tight">
+    <!-- En-tête Poétique -->
+    <header class="max-w-3xl mx-auto text-center px-6 mt-6 mb-20 fade-in">
+        <span class="text-[0.65rem] tracking-[0.4em] uppercase font-semibold text-terracotta">Bienvenue</span>
+        <h1 class="font-serif text-5xl md:text-6xl font-extralight mt-4 mb-6 leading-tight tracking-tight">
             En attendant <br>
-            <span class="italic font-light" style="color: #C87A65;">notre petit oiseau</span>
+            <span class="italic font-light relative inline-block mt-1 text-terracotta">
+                notre petit oiseau
+            </span>
         </h1>
-        <p class="font-light text-sm md:text-base leading-relaxed max-w-xl mx-auto opacity-80" style="color: #7A7269;">
-            Parce que vous nous demandez souvent ce qui nous ferait plaisir ou ce dont nous aurions besoin pour préparer son arrivée, voici notre liste de souhaits.
+        <p class="font-light text-sm md:text-base leading-relaxed max-w-xl mx-auto opacity-75 text-stone-700">
+            Parce que vous nous demandez souvent ce qui nous ferait plaisir ou ce dont nous aurions besoin pour préparer son arrivée, voici notre sélection de doux souhaits.
         </p>
-
-        <div class="mt-12 p-8 rounded-2xl max-w-lg mx-auto border bg-white" style="borderColor: #EFEBE4;">
-            <h3 class="font-serif text-xl font-light mb-2">La Cagnotte Globale</h3>
-            <p class="text-xs font-light mb-6" style="color: #7A7269;">Pour participer librement à l'aménagement de la chambre ou aux futurs besoins de bébé.</p>
-            <a href="https://www.leetchi.com/c/votre-cagnotte-ici" target="_blank" rel="noopener noreferrer" class="inline-block font-medium text-xs tracking-widest uppercase text-white px-8 py-4 rounded-full transition-transform hover:scale-[1.02] cursor-pointer" style="background-color: #C87A65;">
-                ✨ Contribuer à la cagnotte
-            </a>
-        </div>
     </header>
 
+    <!-- Zone Principale -->
     <main class="max-w-5xl mx-auto px-6">
-        <div class="flex items-center justify-between border-b pb-4 mb-12" style="borderColor: #EFEBE4;">
-            <h2 class="font-serif text-2xl font-light italic">Nos coups de cœur</h2>
-            <button id="addGiftBtn" onclick="openGiftForm()" class="hidden text-xs uppercase tracking-wider px-4 py-2 rounded-full text-white cursor-pointer" style="background-color: #8FA089;">
+        
+        <!-- Titre de section + Décompte Dynamique -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-5 mb-12 gap-4 border-sand-border">
+            <div class="flex items-center gap-4">
+                <h2 class="font-serif text-2xl font-light italic text-stone-800">Nos coups de cœur</h2>
+                <span id="completionBadge" class="text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full font-semibold transition-all duration-500 shadow-sm bg-sand-light text-warm-gray">
+                    Calcul...
+                </span>
+            </div>
+            <button id="addGiftBtn" onclick="openGiftForm()" class="hidden text-[0.7rem] uppercase font-medium tracking-widest px-5 py-2.5 rounded-full text-white cursor-pointer self-start sm:self-auto shadow-sm transition-all duration-300 bg-sage hover:bg-sage-hover active:scale-98">
                 + Ajouter une idée
             </button>
         </div>
 
-        <div id="giftForm" class="hidden mb-12 p-8 rounded-xl border bg-white" style="borderColor: #EFEBE4;">
-            <h3 class="font-serif text-lg mb-4">Ajouter un souhait</h3>
+        <!-- Formulaire d'ajout (visible uniquement pour les parents) -->
+        <div id="giftForm" class="hidden mb-12 p-8 rounded-2xl border bg-white shadow-md border-sand-light">
+            <h3 class="font-serif text-lg mb-4 text-stone-800">Ajouter un souhait sur la liste</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <input type="text" id="formTitle" placeholder="Nom du cadeau (ex: Cape de bain)" class="p-3 border rounded-xs outline-none bg-neutral-50" style="borderColor: #EFEBE4;">
-                <input type="text" id="formPrice" placeholder="Prix indicatif (ex: 40€)" class="p-3 border rounded-xs outline-none bg-neutral-50" style="borderColor: #EFEBE4;">
-                <input type="url" id="formLink" placeholder="Lien vers une boutique internet (optionnel)" class="p-3 border rounded-xs outline-none bg-neutral-50 md:col-span-2" style="borderColor: #EFEBE4;">
-                <textarea id="formDesc" placeholder="Petite note pour nos proches..." class="p-3 border rounded-xs outline-none bg-neutral-50 md:col-span-2 h-20 resize-none" style="borderColor: #EFEBE4;"></textarea>
+                <input type="text" id="formTitle" placeholder="Nom du cadeau (ex: Cape de bain)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light">
+                <input type="text" id="formPrice" placeholder="Prix indicatif (ex: 40€)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light">
+                <input type="url" id="formLink" placeholder="Lien direct vers le produit internet (optionnel)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light md:col-span-2">
+                <textarea id="formDesc" placeholder="Petite note pour nos proches (taille, couleur, astuce...)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light md:col-span-2 h-24 resize-none"></textarea>
             </div>
-            <div class="mt-4 flex gap-2 justify-end text-xs uppercase tracking-wider">
-                <button onclick="closeGiftForm()" class="px-4 py-2 opacity-60">Annuler</button>
-                <button onclick="saveGift()" class="px-6 py-2 text-white rounded-full cursor-pointer" style="background-color: #8FA089;">Enregistrer</button>
+            <div class="mt-5 flex gap-3 justify-end text-xs uppercase tracking-widest font-medium">
+                <button onclick="closeGiftForm()" class="px-5 py-2.5 opacity-60 hover:opacity-100 transition-opacity">Annuler</button>
+                <button onclick="saveGift()" class="px-6 py-2.5 text-white rounded-full cursor-pointer transition-all bg-sage hover:bg-sage-hover">Enregistrer</button>
             </div>
         </div>
 
-        <div id="giftsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <p class="text-center col-span-2 opacity-50 italic">Chargement de la liste de souhaits...</p>
+        <!-- Grille de Cadeaux -->
+        <div id="giftsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+            <p class="text-center col-span-2 opacity-40 italic text-sm py-12">Chargement des précieux souhaits...</p>
         </div>
+
+        <!-- Bloc Cagnotte Globale -->
+        <section class="mt-24 border-t pt-16 border-sand-border">
+            <div class="p-10 rounded-3xl max-w-lg mx-auto border bg-white text-center transition-all duration-500 hover:shadow-md border-sand-light" style="box-shadow: 0 10px 30px -10px rgba(90,80,70,0.05);">
+                <div class="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-xl bg-neutral-50 text-terracotta">✨</div>
+                <h3 class="font-serif text-2xl font-light mb-2 text-stone-800">La Cagnotte Globale</h3>
+                <p class="text-xs font-light mb-8 max-w-sm mx-auto leading-relaxed text-warm-gray">Pour participer en toute liberté à l'aménagement final de sa chambre ou aux futurs petits besoins du quotidien.</p>
+                <a href="https://www.leetchi.com/c/votre-cagnotte-ici" target="_blank" rel="noopener noreferrer" class="inline-block font-medium text-[0.7rem] tracking-[0.2em] uppercase text-white px-10 py-4 rounded-full transition-all duration-300 bg-terracotta hover:bg-[#B56A56] hover:shadow-sm hover:scale-[1.01] active:scale-99 cursor-pointer">
+                    Contribuer à la cagnotte
+                </a>
+            </div>
+        </section>
     </main>
 
     <script>
@@ -79,27 +142,54 @@
         // CONFIGURATION SUPABASE
         // =========================================================
         const SUPABASE_URL = "https://fldgwdpxoejujogtuiqe.supabase.co"; 
-        const SUPABASE_ANON_KEY = "sb_publishable_mNEzs0yWQDyJoT33VcsBZw_XKZ4-8yY"; // REMPLACE CETTE VALEUR PAR TA CLÉ PUBLISHABLE ENTIÈRE
-        const PARENT_PASSWORD = "bebe"; // Ton mot de passe d'administration
+        const SUPABASE_ANON_KEY = "sb_publishable_mNEzs0yWQDyJoT33VcsBZw_XKZ4-8yY"; 
+        const PARENT_PASSWORD = "bebe"; 
         
         let _supabase = null;
         let adminMode = false;
 
-        // Connexion initiale à Supabase
         try {
             if (typeof supabase !== 'undefined') {
                 _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             } else {
-                document.getElementById('giftsGrid').innerHTML = '<p class="text-center col-span-2 text-red-600 italic">Erreur : Le script Supabase n\'a pas pu être chargé par le navigateur.</p>';
+                document.getElementById('giftsGrid').innerHTML = '<p class="text-center col-span-2 text-red-600 italic">Erreur : Le script Supabase n\'a pas pu être chargé.</p>';
             }
         } catch (e) {
             console.error("Erreur d'initialisation Supabase :", e);
         }
 
-        // Charger et afficher les cadeaux depuis Supabase
+        function getDomainName(url) {
+            try {
+                const domain = new URL(url).hostname.replace('www.', '');
+                const parts = domain.split('.');
+                return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+            } catch (e) {
+                return "Voir le site";
+            }
+        }
+
+        function updateCompletionStats(gifts) {
+            const badge = document.getElementById('completionBadge');
+            if (!gifts || gifts.length === 0) {
+                badge.style.display = 'none';
+                return;
+            }
+            badge.style.display = 'inline-block';
+            const total = gifts.length;
+            const remaining = gifts.filter(g => !g.reserved).length;
+            const percentageRemaining = Math.round((remaining / total) * 100);
+
+            badge.innerText = `${percentageRemaining}% restants`;
+            
+            if (percentageRemaining < 30) {
+                badge.className = "text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full font-semibold transition-all duration-500 shadow-sm bg-orange-50 text-terracotta";
+            } else {
+                badge.className = "text-[0.65rem] tracking-widest uppercase px-3 py-1 rounded-full font-semibold transition-all duration-500 shadow-sm bg-sand-light text-warm-gray";
+            }
+        }
+
         async function loadGifts() {
             const grid = document.getElementById('giftsGrid');
-            
             if (!_supabase) return;
 
             const { data, error } = await _supabase.from('cadeaux').select('*').order('id', { ascending: true });
@@ -112,43 +202,68 @@
                 return;
             }
 
+            updateCompletionStats(data);
             grid.innerHTML = '';
 
             if (!data || data.length === 0) {
-                grid.innerHTML = `<div class="text-center col-span-2 py-12 opacity-50">
-                    <p class="font-serif text-xl italic mb-2">La liste est encore vide</p>
-                    <p class="text-xs">Connectez-vous à l'espace parent en haut à droite pour ajouter vos premiers souhaits !</p>
+                grid.innerHTML = `<div class="text-center col-span-2 py-16 opacity-60">
+                    <p class="font-serif text-2xl italic mb-2 text-stone-700">La liste est encore vide</p>
+                    <p class="text-xs font-light">Connectez-vous à l'espace parent en haut à droite pour ajouter vos premières idées !</p>
                 </div>`;
                 return;
             }
 
-            data.forEach(item => {
+            data.forEach((item, index) => {
                 const card = document.createElement('div');
-                card.className = "p-8 rounded-2xl border bg-white flex flex-col justify-between transition-all duration-300 shadow-xs";
-                card.style.borderColor = "#EFEBE4";
-                if (item.reserved) card.style.opacity = "0.65";
+                card.className = "gift-card p-8 rounded-2xl border bg-white flex flex-col justify-between relative fade-in border-sand-light";
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                if (item.reserved) {
+                    card.style.opacity = "0.55";
+                    card.style.transform = "none";
+                    card.classList.remove('hover:-translate-y-1');
+                }
 
-                const linkHtml = item.link && !item.reserved ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="underline tracking-wide opacity-70 hover:opacity-100" style="color: #7A7269;">Voir un exemple ↗</a>` : '';
-                const statusHtml = item.reserved ? `<span class="italic" style="color: #C87A65;">🌾 Offert par ${item.reserved_by || 'un proche'}</span>` : '';
+                let linkHtml = '';
+                if (item.link && !item.reserved) {
+                    const shopName = getDomainName(item.link);
+                    linkHtml = `
+                        <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[0.68rem] font-medium tracking-wide border bg-stone-50/40 transition-all duration-300 hover:bg-stone-100 hover:text-stone-900 text-stone-600 border-sand-light">
+                            <span class="opacity-70">🛒</span> ${shopName} ↗
+                        </a>
+                    `;
+                }
+
+                const statusHtml = item.reserved ? `<span class="italic text-[0.72rem] font-light flex items-center gap-1 text-terracotta">🌾 Offert par ${item.reserved_by || 'un proche'}</span>` : '';
                 
                 let actionBtnHtml = '';
                 if (adminMode) {
-                    actionBtnHtml = `<button onclick="deleteItem(${item.id})" class="text-red-700 opacity-70 hover:opacity-100 cursor-pointer text-xs uppercase tracking-wider font-medium">Supprimer</button>`;
+                    actionBtnHtml = `<button onclick="deleteItem(${item.id})" class="text-red-700/80 opacity-80 hover:opacity-100 cursor-pointer text-xs uppercase tracking-widest font-semibold transition-opacity">Supprimer</button>`;
                 } else if (!item.reserved) {
-                    actionBtnHtml = `<button onclick="reserveItem(${item.id})" class="px-5 py-2.5 rounded-full text-white font-medium tracking-wider uppercase text-[0.65rem] transition-transform hover:scale-[1.02] cursor-pointer" style="background-color: #8FA089;">Offrir ce cadeau</button>`;
+                    actionBtnHtml = `<button onclick="reserveItem(${item.id})" class="px-5 py-2.5 rounded-full text-white font-medium tracking-widest uppercase text-[0.62rem] transition-all duration-300 bg-sage hover:bg-sage-hover hover:scale-[1.03] active:scale-97 cursor-pointer shadow-sm">Offrir</button>`;
+                }
+
+                let budgetIcon = '🌱';
+                if (item.price) {
+                    const numericPrice = parseInt(item.price.replace(/[^0-9]/g, ''));
+                    if (numericPrice >= 150) budgetIcon = '✨';
+                    else if (numericPrice >= 60) budgetIcon = '🌿';
                 }
 
                 card.innerHTML = `
                     <div>
-                        <div class="flex justify-between items-baseline gap-4 mb-4">
-                            <h3 class="font-serif text-xl font-normal leading-tight ${item.reserved ? 'line-through text-neutral-400' : ''}" style="color: ${item.reserved ? '#7A7269' : '#3A3530'}">
+                        <div class="flex justify-between items-start gap-4 mb-4">
+                            <h3 class="font-serif text-xl font-normal leading-tight text-stone-800 ${item.reserved ? 'line-through opacity-50' : ''}">
                                 ${item.title}
                             </h3>
-                            ${item.price ? `<span class="font-serif text-base italic shrink-0" style="color: #C87A65;">${item.price}</span>` : ''}
+                            <div class="text-right shrink-0">
+                                ${item.price ? `<span class="font-serif text-base font-light italic block text-terracotta">${item.price}</span>` : ''}
+                                <span class="text-[0.6rem] block mt-0.5 opacity-30 tracking-widest">${item.reserved ? '🔒' : budgetIcon}</span>
+                            </div>
                         </div>
-                        ${item.description ? `<p class="font-light text-xs leading-relaxed mb-6" style="color: #7A7269;">${item.description}</p>` : ''}
+                        ${item.description ? `<p class="font-light text-xs leading-relaxed mb-6 text-stone-600">${item.description}</p>` : ''}
                     </div>
-                    <div class="flex items-center justify-between pt-4 border-t mt-4" style="border-top-color: #EFEBE4; font-size: 0.75rem;">
+                    <div class="flex items-center justify-between pt-4 border-t mt-4 border-neutral-100" style="font-size: 0.75rem;">
                         <div>${linkHtml || statusHtml}</div>
                         <div>${actionBtnHtml}</div>
                     </div>
@@ -157,27 +272,25 @@
             });
         }
 
-        // Gestion du mode d'édition Parent
         function toggleAdminMode() {
             if (!adminMode) {
                 const pw = prompt("Entrez le mot de passe d'administration :");
                 if (pw === PARENT_PASSWORD) {
                     adminMode = true;
-                    document.getElementById('adminBtn').innerText = "🚪 Quitter l'édition";
+                    document.getElementById('adminBtn').innerHTML = "🚪 QUITTER L'ÉDITION";
                     document.getElementById('addGiftBtn').classList.remove('hidden');
                 } else if (pw !== null) {
                     alert("Mot de passe incorrect.");
                 }
             } else {
                 adminMode = false;
-                document.getElementById('adminBtn').innerText = "🔒 Parents";
+                document.getElementById('adminBtn').innerHTML = "<span>🔒</span> PARENTS";
                 document.getElementById('addGiftBtn').classList.add('hidden');
                 closeGiftForm();
             }
             loadGifts();
         }
 
-        // Offrir un cadeau
         async function reserveItem(id) {
             const name = prompt("Pourriez-vous nous indiquer votre nom ou prénom pour que nous puissions vous remercier ?");
             if (name === null) return;
@@ -188,7 +301,6 @@
             loadGifts();
         }
 
-        // Fonctions du formulaire
         function openGiftForm() { document.getElementById('giftForm').classList.remove('hidden'); }
         function closeGiftForm() { document.getElementById('giftForm').classList.add('hidden'); resetForm(); }
         function resetForm() {
@@ -198,7 +310,6 @@
             document.getElementById('formDesc').value = '';
         }
 
-        // Ajouter un nouveau souhait
         async function saveGift() {
             const title = document.getElementById('formTitle').value.trim();
             const price = document.getElementById('formPrice').value.trim();
@@ -214,7 +325,6 @@
             loadGifts();
         }
 
-        // Supprimer un souhait
         async function deleteItem(id) {
             if (confirm("Supprimer définitivement cette idée de cadeau ?")) {
                 const { error } = await _supabase.from('cadeaux').delete().eq('id', id);
@@ -223,7 +333,6 @@
             }
         }
 
-        // Chargement initial au déploiement de la page
         loadGifts();
     </script>
 </body>
