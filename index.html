@@ -5,14 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notre Liste de Naissance</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+    <!-- Favicon Émoji Oiseau Sympa -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕊️</text></svg>">
 
+    <!-- Autoriser les connexions externes pour éviter les blocages de sécurité GitHub Pages -->
     <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src * 'unsafe-inline';">
 
+    <!-- Tailwind CSS (Version stable 3.4) -->
     <script src="https://cdn.tailwindcss.com/3.4.15"></script>
     
+    <!-- Script officiel Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
+    <!-- Polices élégantes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,300&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -44,7 +49,6 @@
             background: radial-gradient(circle at top, #FDFBF7 0%, #F5F0E6 100%); 
         }
         
-        /* Animation fluide pour les cartes */
         .gift-card {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 4px 20px -2px rgba(90, 80, 70, 0.03), 0 2px 6px -1px rgba(90, 80, 70, 0.02);
@@ -55,7 +59,6 @@
             border-color: #DCD5C9 !important;
         }
         
-        /* Apparition en fondu des éléments */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -65,8 +68,11 @@
 </head>
 <body class="pb-24 min-h-screen border-[8px] border-white sm:border-[16px] text-charcoal overflow-x-hidden">
 
+    <!-- LANDING PAGE / ÉCRAN DE BIENVENUE INITIAL -->
     <div id="landingPage" class="fixed inset-0 z-50 flex flex-col justify-between items-center px-6 py-12 text-center bg-gradient-to-b from-[#FDFBF7] to-[#F5F0E6] transition-all duration-700 ease-in-out border-[8px] border-white sm:border-[16px]">
-        <div></div> <div class="max-w-xl mx-auto fade-in">
+        <div></div>
+
+        <div class="max-w-xl mx-auto fade-in">
             <span class="text-[0.65rem] tracking-[0.4em] uppercase font-semibold text-terracotta">Bienvenue</span>
             <h1 class="font-serif text-4xl md:text-5xl font-extralight mt-4 mb-6 leading-tight tracking-tight text-stone-800">
                 La Liste de Naissance <br>
@@ -81,15 +87,15 @@
                 <div class="space-y-4 text-xs font-light text-stone-600">
                     <div class="flex items-start gap-3">
                         <span class="text-sage font-medium">1.</span>
-                        <p><strong class="font-medium text-stone-800">Choisissez une idée :</strong> Parcourez nos coups de cœur selon vos envies et votre budget.</p>
+                        <p><strong class="font-medium text-stone-800">Choisissez une idée :</strong> Parcourez nos coups de cœur selon vos envies.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="text-sage font-medium">2.</span>
-                        <p><strong class="font-medium text-stone-800">Réservez en un clic :</strong> Entrez simplement votre nom pour indiquer que vous offrez ce cadeau.</p>
+                        <p><strong class="font-medium text-stone-800">Réservez en un clic :</strong> Indiquez votre nom pour bloquer le cadeau sur la liste.</p>
                     </div>
                     <div class="flex items-start gap-3">
                         <span class="text-sage font-medium">3.</span>
-                        <p><strong class="font-medium text-stone-800">Commandez librement :</strong> Un lien vous redirige vers la boutique marchande pour finaliser l'achat de votre côté.</p>
+                        <p><strong class="font-medium text-stone-800">Commandez librement :</strong> Un lien vous redirige vers la boutique pour finaliser l'achat à votre convenance.</p>
                     </div>
                 </div>
             </div>
@@ -103,6 +109,7 @@
     </div>
 
 
+    <!-- CONTENU PRINCIPAL DE LA LISTE -->
     <div id="mainContent" class="opacity-0 transition-opacity duration-700">
         
         <nav class="max-w-6xl mx-auto px-6 py-4 flex justify-end">
@@ -138,11 +145,12 @@
                 </button>
             </div>
 
+            <!-- Formulaire d'ajout -->
             <div id="giftForm" class="hidden mb-12 p-8 rounded-2xl border bg-white shadow-md border-sand-light">
                 <h3 class="font-serif text-lg mb-4 text-stone-800">Ajouter un souhait sur la liste</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <input type="text" id="formTitle" placeholder="Nom du cadeau (ex: Cape de bain)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light">
-                    <input type="text" id="formPrice" placeholder="Prix indicatif (ex: 40€)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light">
+                    <input type="text" id="formPrice" placeholder="Prix indicatif (ex: 40€) - S'affichera uniquement pour vous" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light">
                     <input type="url" id="formLink" placeholder="Lien direct vers le produit internet (optionnel)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light md:col-span-2">
                     <textarea id="formDesc" placeholder="Petite note pour nos proches (taille, couleur, astuce...)" class="p-3.5 border rounded-xl outline-none bg-neutral-50/50 focus:bg-white focus:border-stone-400 transition-all border-sand-light md:col-span-2 h-24 resize-none"></textarea>
                 </div>
@@ -152,10 +160,12 @@
                 </div>
             </div>
 
+            <!-- Grille de Cadeaux -->
             <div id="giftsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
                 <p class="text-center col-span-2 opacity-40 italic text-sm py-12">Chargement des précieux souhaits...</p>
             </div>
 
+            <!-- Bloc Cagnotte Globale -->
             <section class="mt-24 border-t pt-16 border-sand-border">
                 <div class="p-10 rounded-3xl max-w-lg mx-auto border bg-white text-center transition-all duration-500 hover:shadow-md border-sand-light" style="box-shadow: 0 10px 30px -10px rgba(90,80,70,0.05);">
                     <div class="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center text-xl bg-neutral-50 text-terracotta">✨</div>
@@ -190,23 +200,14 @@
             console.error("Erreur d'initialisation Supabase :", e);
         }
 
-        // Gestion de la transition d'entrée sur le site
         function enterSite() {
             const landing = document.getElementById('landingPage');
             const main = document.getElementById('mainContent');
-            
-            // Effacement en douceur de la landing page
             landing.style.opacity = '0';
             landing.style.pointerEvents = 'none';
-            
-            // Révélation du contenu principal
             main.classList.remove('opacity-0');
             main.classList.add('opacity-100');
-            
-            // Suppression complète du DOM après l'animation pour libérer la mémoire
-            setTimeout(() => {
-                landing.style.display = 'none';
-            }, 700);
+            setTimeout(() => { landing.style.display = 'none'; }, 700);
         }
 
         function getDomainName(url) {
@@ -258,8 +259,7 @@
 
             if (!data || data.length === 0) {
                 grid.innerHTML = `<div class="text-center col-span-2 py-16 opacity-60">
-                    <p class="font-serif text-2xl italic mb-2 text-stone-700">La liste est encore vide</p>
-                    <p class="text-xs font-light">Connectez-vous à l'espace parent en haut à droite pour ajouter vos premières idées !</p>
+                    <p class="font-serif text-2xl italic mb-2 text-stone-700">La Liste est vide</p>
                 </div>`;
                 return;
             }
@@ -270,7 +270,7 @@
                 card.style.animationDelay = `${index * 0.05}s`;
                 
                 if (item.reserved) {
-                    card.style.opacity = "0.55";
+                    card.style.opacity = "0.6";
                     card.style.transform = "none";
                     card.classList.remove('hover:-translate-y-1');
                 }
@@ -285,7 +285,15 @@
                     `;
                 }
 
-                const statusHtml = item.reserved ? `<span class="italic text-[0.72rem] font-light flex items-center gap-1 text-terracotta">🌾 Offert par ${item.reserved_by || 'un proche'}</span>` : '';
+                // CHANGEMENT : Statut anonyme en public, complet en mode parent
+                let statusHtml = '';
+                if (item.reserved) {
+                    if (adminMode) {
+                        statusHtml = `<span class="italic text-[0.72rem] font-semibold flex items-center gap-1 text-emerald-700">💝 Offert par : ${item.reserved_by || 'Anonyme'}</span>`;
+                    } else {
+                        statusHtml = `<span class="italic text-[0.72rem] font-light flex items-center gap-1 text-stone-400">🌾 Déjà réservé</span>`;
+                    }
+                }
                 
                 let actionBtnHtml = '';
                 if (adminMode) {
@@ -301,14 +309,17 @@
                     else if (numericPrice >= 60) budgetIcon = '🌿';
                 }
 
+                // CHANGEMENT : Le prix ne s'affiche en texte QUE pour les parents ou si l'objet n'est pas réservé
+                const showPrice = item.price && (!item.reserved || adminMode);
+
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start gap-4 mb-4">
-                            <h3 class="font-serif text-xl font-normal leading-tight text-stone-800 ${item.reserved ? 'line-through opacity-50' : ''}">
+                            <h3 class="font-serif text-xl font-normal leading-tight text-stone-800 ${item.reserved ? 'line-through opacity-40' : ''}">
                                 ${item.title}
                             </h3>
                             <div class="text-right shrink-0">
-                                ${item.price ? `<span class="font-serif text-base font-light italic block text-terracotta">${item.price}</span>` : ''}
+                                ${showPrice ? `<span class="font-serif text-base font-light italic block text-terracotta">${item.price}</span>` : ''}
                                 <span class="text-[0.6rem] block mt-0.5 opacity-30 tracking-widest">${item.reserved ? '🔒' : budgetIcon}</span>
                             </div>
                         </div>
@@ -343,8 +354,48 @@
         }
 
         async function reserveItem(id) {
-            const name = prompt("Pourriez-vous nous indiquer votre nom ou prénom pour que nous puissions vous remercier ?");
+            const name = prompt("Pourriez-vous nous indiquer votre nom ou prénom pour que Cindy & Logan puissent vous remercier ? (Il restera secret pour les autres invités)");
             if (name === null) return;
             const finalName = name.trim() || "Un proche";
             
-            const { error } = await _supabase.from('cadeaux
+            const { error } = await _supabase.from('cadeaux').update({ reserved: true, reserved_by: finalName }).eq('id', id);
+            if (error) alert("Erreur lors de la réservation : " + error.message);
+            loadGifts();
+        }
+
+        function openGiftForm() { document.getElementById('giftForm').classList.remove('hidden'); }
+        function closeGiftForm() { document.getElementById('giftForm').classList.add('hidden'); resetForm(); }
+        function resetForm() {
+            document.getElementById('formTitle').value = '';
+            document.getElementById('formPrice').value = '';
+            document.getElementById('formLink').value = '';
+            document.getElementById('formDesc').value = '';
+        }
+
+        async function saveGift() {
+            const title = document.getElementById('formTitle').value.trim();
+            const price = document.getElementById('formPrice').value.trim();
+            const link = document.getElementById('formLink').value.trim();
+            const description = document.getElementById('formDesc').value.trim();
+
+            if (!title) return alert("Le nom du cadeau est obligatoire.");
+
+            const { error } = await _supabase.from('cadeaux').insert([{ title, price, link, description }]);
+            if (error) alert("Erreur d'enregistrement : " + error.message);
+            
+            closeGiftForm();
+            loadGifts();
+        }
+
+        async function deleteItem(id) {
+            if (confirm("Supprimer définitivement cette idée de cadeau ?")) {
+                const { error } = await _supabase.from('cadeaux').delete().eq('id', id);
+                if (error) alert("Erreur de suppression : " + error.message);
+                loadGifts();
+            }
+        }
+
+        loadGifts();
+    </script>
+</body>
+</html>
