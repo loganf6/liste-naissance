@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notre Liste de Naissance</title>
     
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src * 'unsafe-inline';">
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,16 +40,8 @@
 
         <div class="mt-12 p-8 rounded-2xl max-w-lg mx-auto border bg-white" style="borderColor: #EFEBE4;">
             <h3 class="font-serif text-xl font-light mb-2">La Cagnotte Globale</h3>
-            <p class="text-xs font-light mb-6" style="color: #7A7269;">
-                Pour participer librement à l'aménagement de la chambre ou aux futurs besoins de bébé.
-            </p>
-            <a 
-                href="https://www.leetchi.com/c/votre-cagnotte-ici" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="inline-block font-medium text-xs tracking-widest uppercase text-white px-8 py-4 rounded-full transition-transform hover:scale-[1.02] cursor-pointer"
-                style="background-color: #C87A65;"
-            >
+            <p class="text-xs font-light mb-6" style="color: #7A7269;">Pour participer librement à l'aménagement de la chambre ou aux futurs besoins de bébé.</p>
+            <a href="https://www.leetchi.com/c/votre-cagnotte-ici" target="_blank" rel="noopener noreferrer" class="inline-block font-medium text-xs tracking-widest uppercase text-white px-8 py-4 rounded-full transition-transform hover:scale-[1.02] cursor-pointer" style="background-color: #C87A65;">
                 ✨ Contribuer à la cagnotte
             </a>
         </div>
@@ -74,39 +70,72 @@
         </div>
 
         <div id="giftsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            </div>
+            <p class="text-center col-span-2 opacity-50 italic">Chargement de la liste de souhaits...</p>
+        </div>
     </main>
 
     <script>
-        const PARENT_PASSWORD = "bebe";
+        // =========================================================
+        // CONFIGURATION SUPABASE
+        // =========================================================
+        const SUPABASE_URL = "https://fldgwdpxoejujogtuiqe.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_mNEzs0yWQDyJoT33VcsBZw_XKZ4-8yY"; // REMPLACE CETTE VALEUR PAR TA CLÉ PUBLISHABLE ENTIÈRE
+        const PARENT_PASSWORD = "bebe"; // Ton mot de passe d'administration
+        
+        let _supabase = null;
         let adminMode = false;
 
-        // Base de données initiale des cadeaux
-        let items = [
-            { id: 1, title: "Poussette trio tout-terrain", description: "Pour nos futures balades en famille, sur les chemins de campagne comme en ville.", link: "https://www.bonton.fr", price: "650€", reserved: false, reservedBy: "" },
-            { id: 2, title: "Berceau évolutif en rotin", description: "Un petit cocon vintage et naturel pour habiller sa future chambre.", link: "https://www.smallable.com", price: "280€", reserved: true, reservedBy: "Mamie Jeanne" },
-            { id: 3, title: "Gigoteuse en gaze de coton", description: "Toute douce, couleur terre cuite, pour des nuits paisibles.", link: "https://www.laredoute.fr", price: "45€", reserved: false, reservedBy: "" },
-            { id: 4, title: "Set de vaisselle en silicone", description: "Pour ses premiers repas de grand. Sans BPA, incassable et lavable en machine.", link: "", price: "35€", reserved: false, reservedBy: "" }
-        ];
+        // Connexion initiale à Supabase
+        try {
+            if (typeof supabase !== 'undefined') {
+                _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } else {
+                document.getElementById('giftsGrid').innerHTML = '<p class="text-center col-span-2 text-red-600 italic">Erreur : Le script Supabase n\'a pas pu être chargé par le navigateur.</p>';
+            }
+        } catch (e) {
+            console.error("Erreur d'initialisation Supabase :", e);
+        }
 
-        function renderGifts() {
+        // Charger et afficher les cadeaux depuis Supabase
+        async function loadGifts() {
             const grid = document.getElementById('giftsGrid');
+            
+            if (!_supabase) return;
+
+            const { data, error } = await _supabase.from('cadeaux').select('*').order('id', { ascending: true });
+            
+            if (error) {
+                grid.innerHTML = `<div class="text-center col-span-2 p-6 bg-red-50 text-red-700 rounded-xl border border-red-200">
+                    <p class="font-medium">Erreur de connexion à la base de données</p>
+                    <p class="text-xs mt-1 opacity-80">${error.message}</p>
+                </div>`;
+                return;
+            }
+
             grid.innerHTML = '';
 
-            items.forEach(item => {
+            if (!data || data.length === 0) {
+                grid.innerHTML = `<div class="text-center col-span-2 py-12 opacity-50">
+                    <p class="font-serif text-xl italic mb-2">La liste est encore vide</p>
+                    <p class="text-xs">Connectez-vous à l'espace parent en haut à droite pour ajouter vos premiers souhaits !</p>
+                </div>`;
+                return;
+            }
+
+            data.forEach(item => {
                 const card = document.createElement('div');
-                card.className = "p-8 rounded-2xl border bg-white flex flex-col justify-between transition-all duration-300";
+                card.className = "p-8 rounded-2xl border bg-white flex flex-col justify-between transition-all duration-300 shadow-xs";
                 card.style.borderColor = "#EFEBE4";
                 if (item.reserved) card.style.opacity = "0.65";
 
                 const linkHtml = item.link && !item.reserved ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer" class="underline tracking-wide opacity-70 hover:opacity-100" style="color: #7A7269;">Voir un exemple ↗</a>` : '';
-                const statusHtml = item.reserved ? `<span class="italic" style="color: #C87A65;">🌾 Offert par ${item.reservedBy}</span>` : '';
+                const statusHtml = item.reserved ? `<span class="italic" style="color: #C87A65;">🌾 Offert par ${item.reserved_by || 'un proche'}</span>` : '';
                 
                 let actionBtnHtml = '';
                 if (adminMode) {
-                    actionBtnHtml = `<button onclick="deleteItem(${item.id})" class="text-red-700 opacity-70 hover:opacity-100 cursor-pointer text-xs uppercase tracking-wider">Supprimer</button>`;
+                    actionBtnHtml = `<button onclick="deleteItem(${item.id})" class="text-red-700 opacity-70 hover:opacity-100 cursor-pointer text-xs uppercase tracking-wider font-medium">Supprimer</button>`;
                 } else if (!item.reserved) {
-                    actionBtnHtml = `<button onclick="reserveItem(${item.id})" class="px-5 py-2.5 rounded-full text-white font-medium tracking-wider uppercase text-[0.65rem] transition-colors cursor-pointer" style="background-color: #8FA089;">Offrir ce cadeau</button>`;
+                    actionBtnHtml = `<button onclick="reserveItem(${item.id})" class="px-5 py-2.5 rounded-full text-white font-medium tracking-wider uppercase text-[0.65rem] transition-transform hover:scale-[1.02] cursor-pointer" style="background-color: #8FA089;">Offrir ce cadeau</button>`;
                 }
 
                 card.innerHTML = `
@@ -119,7 +148,7 @@
                         </div>
                         ${item.description ? `<p class="font-light text-xs leading-relaxed mb-6" style="color: #7A7269;">${item.description}</p>` : ''}
                     </div>
-                    <div class="flex items-center justify-between pt-4 border-t" style="border-top-color: #EFEBE4; font-size: 0.75rem;">
+                    <div class="flex items-center justify-between pt-4 border-t mt-4" style="border-top-color: #EFEBE4; font-size: 0.75rem;">
                         <div>${linkHtml || statusHtml}</div>
                         <div>${actionBtnHtml}</div>
                     </div>
@@ -128,6 +157,7 @@
             });
         }
 
+        // Gestion du mode d'édition Parent
         function toggleAdminMode() {
             if (!adminMode) {
                 const pw = prompt("Entrez le mot de passe d'administration :");
@@ -144,22 +174,21 @@
                 document.getElementById('addGiftBtn').classList.add('hidden');
                 closeGiftForm();
             }
-            renderGifts();
+            loadGifts();
         }
 
-        function reserveItem(id) {
+        // Offrir un cadeau
+        async function reserveItem(id) {
             const name = prompt("Pourriez-vous nous indiquer votre nom ou prénom pour que nous puissions vous remercier ?");
             if (name === null) return;
+            const finalName = name.trim() || "Un proche";
             
-            items = items.map(item => {
-                if (item.id === id) {
-                    return { ...item, reserved: true, reservedBy: name.trim() || "Un proche" };
-                }
-                return item;
-            });
-            renderGifts();
+            const { error } = await _supabase.from('cadeaux').update({ reserved: true, reserved_by: finalName }).eq('id', id);
+            if (error) alert("Erreur lors de la réservation : " + error.message);
+            loadGifts();
         }
 
+        // Fonctions du formulaire
         function openGiftForm() { document.getElementById('giftForm').classList.remove('hidden'); }
         function closeGiftForm() { document.getElementById('giftForm').classList.add('hidden'); resetForm(); }
         function resetForm() {
@@ -169,7 +198,8 @@
             document.getElementById('formDesc').value = '';
         }
 
-        function saveGift() {
+        // Ajouter un nouveau souhait
+        async function saveGift() {
             const title = document.getElementById('formTitle').value.trim();
             const price = document.getElementById('formPrice').value.trim();
             const link = document.getElementById('formLink').value.trim();
@@ -177,20 +207,24 @@
 
             if (!title) return alert("Le nom du cadeau est obligatoire.");
 
-            items.push({ id: Date.now(), title, price, link, description, reserved: false, reservedBy: "" });
+            const { error } = await _supabase.from('cadeaux').insert([{ title, price, link, description }]);
+            if (error) alert("Erreur d'enregistrement : " + error.message);
+            
             closeGiftForm();
-            renderGifts();
+            loadGifts();
         }
 
-        function deleteItem(id) {
-            if (confirm("Supprimer cette idée ?")) {
-                items = items.filter(it => it.id !== id);
-                renderGifts();
+        // Supprimer un souhait
+        async function deleteItem(id) {
+            if (confirm("Supprimer définitivement cette idée de cadeau ?")) {
+                const { error } = await _supabase.from('cadeaux').delete().eq('id', id);
+                if (error) alert("Erreur de suppression : " + error.message);
+                loadGifts();
             }
         }
 
-        // Premier affichage au chargement de la page
-        renderGifts();
+        // Chargement initial au déploiement de la page
+        loadGifts();
     </script>
 </body>
 </html>
